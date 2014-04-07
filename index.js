@@ -9,7 +9,7 @@
 
 
 // ##### DATABASE CONNECTION ##### //
-	db = mongoose.connect('mongodb://mynhltest:mynhltest@novus.modulusmongo.net:27017/vi3Rizov');
+	db = mongoose.connect(process.env.MONGODB_URI);
 
 	// schemas
 	schemaQuestion = new mongoose.Schema({
@@ -26,155 +26,11 @@
 	// create model
 	Quiz = mongoose.model('Quiz', schemaQuiz);
 
-	/*
-	// create questions
-	Quiz.create({ title: 'NHL - Goalies',
-  updated: '2014-03-11 17:55:00',
-  questions:
-   [ { question: 'Who is the goalie for the Anaheim Ducks?',
-       answer: 'Jonas Hiller' },
-     { question: 'Who is the goalie for the Boston Bruins?',
-       answer: 'Tuukka Rask' },
-     { question: 'Who is the goalie for the Buffalo Sabres?',
-       answer: 'Jhonas Enroth' },
-     { question: 'Who is the goalie for the Calgary Flames?',
-       answer: 'Joni Ortio' },
-     { question: 'Who is the goalie for the Carolina Hurricanes?',
-       answer: 'Anton Khudobin' },
-     { question: 'Who is the goalie for the Chicago Blackhawks?',
-       answer: 'Corey Crawford' },
-     { question: 'Who is the goalie for the Colorado Avalanche?',
-       answer: 'Semyon Varlamov' },
-     { question: 'Who is the goalie for the Columbus Blue Jackets?',
-       answer: 'Sergei Bobrovsky' },
-     { question: 'Who is the goalie for the Dallas Stars?',
-       answer: 'Tim Thomas' },
-     { question: 'Who is the goalie for the Detroit Red Wings?',
-       answer: 'Jimmy Howard' },
-     { question: 'Who is the goalie for the Edmonton Oilers?',
-       answer: 'Ben Scrivens' },
-     { question: 'Who is the goalie for the Florida Panthers?',
-       answer: 'Roberto Luongo' },
-     { question: 'Who is the goalie for the Los Angeles Kings?',
-       answer: 'Jonathan Quick' },
-     { question: 'Who is the goalie for the Minnesota Wild?',
-       answer: 'Darcy Kuemper' },
-     { question: 'Who is the goalie for the Montreal Canadiens?',
-       answer: 'Carey Price' },
-     { question: 'Who is the goalie for the Nashville Predators?',
-       answer: 'Pekka Rinne' },
-     { question: 'Who is the goalie for the New Jersey Devils?',
-       answer: 'Martin Brodeur' },
-     { question: 'Who is the goalie for the New York Islanders?',
-       answer: 'Evgeni Nabokov' },
-     { question: 'Who is the goalie for the New York Rangers?',
-       answer: 'Henrik Lundqvist' },
-     { question: 'Who is the goalie for the Philadelphia Flyers?',
-       answer: 'Steve Mason' },
-     { question: 'Who is the goalie for the Phoenix Coyotes?',
-       answer: 'Mike Smith' },
-     { question: 'Who is the goalie for the Pittsburgh Penguins?',
-       answer: 'Marc-André Fleury' },
-     { question: 'Who is the goalie for the Ottawa Senators?',
-       answer: 'Craig Anderson' },
-     { question: 'Who is the goalie for the San Jose Sharks?',
-       answer: 'Antti Niemi' },
-     { question: 'Who is the goalie for the St Louis Blues?',
-       answer: 'Ryan Miller' },
-     { question: 'Who is the goalie for the Tampa Bay Lightning?',
-       answer: 'Ben Bishop' },
-     { question: 'Who is the goalie for the Toronto Maple Leafs?',
-       answer: 'Jonathan Bernier' },
-     { question: 'Who is the goalie for the Vancouver Canucks?',
-       answer: 'Eddie Läck' },
-     { question: 'Who is the goalie for the Washington Capitals?',
-       answer: 'Jaroslav Halak' },
-     { question: 'Who is the goalie for the Winnipeg Jets?',
-       answer: 'Ondrej Pavelec' } ] });
-	
-	
-
-	
-	Quiz.create({ title: 'NHL - Head coaches',
-  updated: '2014-03-22 19:30:00',
-  questions:
-   [ { question: 'Who is the head coach for the Anaheim Ducks?',
-       answer: 'Bruce Boudreau' },
-     { question: 'Who is the head coach for the Boston Bruins?',
-       answer: 'Claude Julien' },
-     { question: 'Who is the head coach for the Buffalo Sabres?',
-       answer: 'Ted Nolan' },
-     { question: 'Who is the head coach for the Calgary Flames?',
-       answer: 'Bob Hartley' },
-     { question: 'Who is the head coach for the Carolina Hurricanes?',
-       answer: 'Kirk Muller' },
-     { question: 'Who is the head coach for the Chicago Blackhawks?',
-       answer: 'Joel Quenneville' },
-     { question: 'Who is the head coach for the Colorado Avalanche?',
-       answer: 'Patrick Roy' },
-     { question: 'Who is the head coach for the Columbus Blue Jackets?',
-       answer: 'Todd Richards' },
-     { question: 'Who is the head coach for the Dallas Stars?',
-       answer: 'Lindy Ruff' },
-     { question: 'Who is the head coach for the Detroit Red Wings?',
-       answer: 'Mike Babcock' },
-     { question: 'Who is the head coach for the Edmonton Oilers?',
-       answer: 'Dallas Eakins' },
-     { question: 'Who is the head coach for the Florida Panthers?',
-       answer: 'Peter Horachek' },
-     { question: 'Who is the head coach for the Los Angeles Kings?',
-       answer: 'Darryl Sutter' },
-     { question: 'Who is the head coach for the Minnesota Wild?',
-       answer: 'Mike Yeo' },
-     { question: 'Who is the head coach for the Montreal Canadiens?',
-       answer: 'Michel Therrien' },
-     { question: 'Who is the head coach for the Nashville Predators?',
-       answer: 'Barry Trotz' },
-     { question: 'Who is the head coach for the New Jersey Devils?',
-       answer: 'Peter DeBoer' },
-     { question: 'Who is the head coach for the New York Islanders?',
-       answer: 'Jack Capuano' },
-     { question: 'Who is the head coach for the New York Rangers?',
-       answer: 'Alain Vigneault' },
-     { question: 'Who is the head coach for the Philadelphia Flyers?',
-       answer: 'Paul MacLean' },
-     { question: 'Who is the head coach for the Phoenix Coyotes?',
-       answer: 'Craig Berube' },
-     { question: 'Who is the head coach for the Pittsburgh Penguins?',
-       answer: 'Dave Tippett' },
-     { question: 'Who is the head coach for the Ottawa Senators?',
-       answer: 'Dan Bylsma' },
-     { question: 'Who is the head coach for the San Jose Sharks?',
-       answer: 'Todd McLellan' },
-     { question: 'Who is the head coach for the St Louis Blues?',
-       answer: 'Ken Hitchcock' },
-     { question: 'Who is the head coach for the Tampa Bay Lightning?',
-       answer: 'Jon Cooper' },
-     { question: 'Who is the head coach for the Toronto Maple Leafs?',
-       answer: 'Randy Carlyle' },
-     { question: 'Who is the head coach for the Vancouver Canucks?',
-       answer: 'John Tortorella' },
-     { question: 'Who is the head coach for the Washington Capitals?',
-       answer: 'Adam Oates' },
-     { question: 'Who is the head coach for the Winnipeg Jets?',
-       answer: 'Paul Maurice' } ] });
-	*/
-
-	/*
-	// delete collection
-	Quiz.remove({}, function(err) { 
-	   console.log('collection removed') 
-	});
-	*/
-	
 
 	Quiz.find(function(err, questions) {	
 		if (err) {
 			console.log(err);
 		}
-
-		// return all questions in JSON format
-		//console.log(questions);
 	});	
 
 // ##### WEB APP SETUP ##### //
