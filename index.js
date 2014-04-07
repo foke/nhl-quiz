@@ -235,6 +235,9 @@
 			   	json.questions[i].options = options;
 
 			}
+
+			// 3.shuffle questions
+			json.questions = shuffle(json.questions);
 						   			
 			// return all questions in JSON format
 			res.json(json);
