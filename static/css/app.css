@@ -149,12 +149,12 @@ body {
 	.card.answer-displayed.angle-cw-2 {
 		-webkit-transform: rotate3d(1, 0, 0, 0) rotate3d(0, 1, 0, 180deg) rotate3d(0, 0, 1, -2deg);	
 	}
-	.card.angle-cw-3 {
+	/*.card.angle-cw-3 {
 		-webkit-transform: rotate(3deg);												
 	}
 	.card.answer-displayed.angle-cw-3 {
 		-webkit-transform: rotate3d(1, 0, 0, 0) rotate3d(0, 1, 0, 180deg) rotate3d(0, 0, 1, -3deg);	
-	}
+	}*/
 	.card.angle-ccw-1 {
 		-webkit-transform: rotate(-1deg);												
 	}
@@ -167,12 +167,12 @@ body {
 	.card.answer-displayed.angle-ccw-2 {
 		-webkit-transform: rotate3d(1, 0, 0, 0) rotate3d(0, 1, 0, 180deg) rotate3d(0, 0, 1, 2deg);	
 	}
-	.card.angle-ccw-3 {
+	/*.card.angle-ccw-3 {
 		-webkit-transform: rotate(-3deg);												
 	}
 	.card.answer-displayed.angle-ccw-3 {
 		-webkit-transform: rotate3d(1, 0, 0, 0) rotate3d(0, 1, 0, 180deg) rotate3d(0, 0, 1, 3deg);	
-	}
+	}*/
 
 	.button {
 		display: inline-block;

@@ -221,7 +221,6 @@
 
 			   	//2.remove current answer
 			   	answersCopy.splice(i, 1);
-			   	if (i==0) {console.log(answersCopy);}
 
 			   	//3.shuffle array
 			   	answersCopy = shuffle(answersCopy);
@@ -248,7 +247,6 @@
 				console.log(err);
 			}
 
-			// return all questions in JSON format
 			res.json(data.questions[0].question);
 		});
 	});
@@ -259,7 +257,6 @@
 				console.log(err);
 			}
 
-			// return all questions in JSON format
 			res.json(data.questions[0].answer);
 		});
 	});
