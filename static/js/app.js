@@ -11,7 +11,7 @@
 		init: function() {
 			QuizApp.handleInteractions();
 			QuizApp.addHandlebarsHelpers();
-			QuizApp.loadQuizes();	
+			QuizApp.loadQuizes();				
 		},
 
 		resetValues: function () {
@@ -36,26 +36,42 @@
 		},
 
 		loadQuizes: function () {			
-			QuizApp.promiseGet('/quiz', 'json').then(function(response) {
+			QuizApp.promiseGet('/quiz', 'json')
+			.then(function(response) {
 				var selectEl = document.getElementById('select-quiz'), 
-					option, i;
+					quizes, option, i;
 
-				for (i = 0; i < response.length; i++) {
-					option = new Option(response[i].title, response[i]._id);
+					try {
+					   quizes = JSON.parse(response);
+					} catch(e) {
+					   quizes = response;
+					}
+
+				for (i = 0; i < quizes.length; i++) {
+					option = new Option(quizes[i].title, quizes[i]._id);
 					selectEl.appendChild(option);
-				}	
+				}								
 
-				QuizApp.select = new Select({el: document.getElementById('select-quiz'), className: 'select-theme-dark'});
-			});	
+				// select should not be created here, but in init. Need to solve that.
+				QuizApp.select = new Select({el: document.getElementById('select-quiz'), className: 'select-theme-dark'});	
+			}).done();	
 		},
 
 		loadQuestions: function (quizID) {
-			Promise.all([QuizApp.promiseGet('/quiz/'+quizID, 'json'), QuizApp.promiseGet('/static/templates.html', 'document')]).then(function(response) {
+			Q.all([QuizApp.promiseGet('/quiz/'+quizID, 'json'), QuizApp.promiseGet('/static/templates.html', 'document')])
+			.then(function(response) {
 				var firstWrapper = document.getElementById('first-wrapper'),
 					lastWrapper = document.getElementById('last-wrapper'),
-					cards, questionElements, source, template, html, wrapper, children, i;
+					questionsObj, cards, questionElements, source, template, html, wrapper, children, i;
 				
-				QuizApp.questions = response[0].questions;
+				try {
+				   questionsObj = JSON.parse(response[0]);
+				} catch(e) {
+				   questionsObj = response[0];
+				}
+
+				
+				QuizApp.questions = questionsObj.questions;
 
 				// run data through template and populate DOM
 				source = response[1].getElementById('questionsTemplate').innerHTML;					
@@ -79,7 +95,8 @@
 
 			}, function() {
 				// one or more failed
-			});	
+			})
+			.done();	
 		},
 
 		handleInteractions: function () {
@@ -92,8 +109,7 @@
 					QuizApp.loadQuestions(QuizApp.select.value);
 				}
 
-				if (e.target === document.getElementById('button-back')) {
-					console.log('restarting...');
+				if (e.target === document.getElementById('button-back')) {					
 					QuizApp.restart();
 				}
 				
@@ -119,10 +135,14 @@
 				parent = option.parentNode,
 				hasParent, parent, correctAnswer, cardBackClass;		
 										
-			QuizApp.promiseGet('/quiz/answer/'+QuizApp.questions[QuizApp.index-1]._id, 'json').then(function(response) {		
-				correctAnswer = response;
+			QuizApp.promiseGet('/quiz/answer/'+QuizApp.questions[QuizApp.index-1]._id, 'json')
+			.then(function(response) {
 
-				console.log(QuizApp.index-1, userAnswer, correctAnswer);
+				try {
+				   correctAnswer = JSON.parse(response);
+				} catch(e) {
+				   correctAnswer = response;
+				}										
 
 				if (userAnswer === correctAnswer) {					
 					cardBackClass = 'back-correct';
@@ -136,7 +156,8 @@
 				parent.querySelector('.js-card-back').classList.add(cardBackClass);
 				parent.classList.add('answer-displayed');	
 				QuizApp.slideWithDelay.call(parent.parentNode, 600);				
-			});			
+			})
+			.done();			
 		},
 
 		getParent: function (parentClass) {
@@ -204,39 +225,46 @@
 		},
 
 		promiseGet: function (url, responseType) {
-			// Return a new promise.
-			return new Promise(function(resolve, reject) {
-				// Do the usual XHR stuff
-				var req = new XMLHttpRequest();
+			var d = Q.defer();
+			Q.stopUnhandledRejectionTracking();
 
-				if(responseType !== 'undefined') {	
-					req.responseType = responseType;
+			// Do the usual XHR stuff
+			var req = new XMLHttpRequest();
+
+			if (responseType !== 'undefined') {	
+				try {
+			        // some browsers throw when setting `responseType` to an unsupported value
+			        req.responseType = responseType;
+			    } catch(error) {
+			        //d.reject(Error('Unsupported response type: ' + responseType));
+			    }
+			}
+			
+			req.open('GET', url);
+
+			req.onload = function() {
+				// This is called even on 404 etc
+				// so check the status
+				if (req.status == 200) {
+					// Resolve the promise with the response text
+					d.resolve(req.response);
 				}
-				
-				req.open('GET', url);
+				else {
+					// Otherwise reject with the status text
+					// which will hopefully be a meaningful error
+					d.reject(Error(req.statusText));
+				}
+			};
 
-				req.onload = function() {
-					// This is called even on 404 etc
-					// so check the status
-					if (req.status == 200) {
-						// Resolve the promise with the response text
-						resolve(req.response);
-					}
-					else {
-						// Otherwise reject with the status text
-						// which will hopefully be a meaningful error
-						reject(Error(req.statusText));
-					}
-				};
+			// Handle network errors
+			req.onerror = function () {
+				d.reject(Error('Network Error'));
+			};
 
-				// Handle network errors
-				req.onerror = function () {
-					reject(Error('Network Error'));
-				};
+			// Make the request
+			req.send();
 
-				// Make the request
-				req.send();
-			});
+			return d.promise;
 		},			
 
 		// should move this to separate file
