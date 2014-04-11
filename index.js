@@ -14,8 +14,8 @@
 
     // schemas
     schemaQuestion = new mongoose.Schema({
-            question    : String,
-            answer      : String          
+        question    : String,
+        answer      : String          
     }, { versionKey: false });
 
     schemaQuiz = new mongoose.Schema({
