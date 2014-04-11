@@ -73,8 +73,8 @@
             
                 QuizApp.questions = questionsObj.questions;
 
-                // run data through template and populate DOM
-                source      = response[1].getElementById('questionsTemplate').innerHTML;                    
+                // run data through template and populate DOM                
+                source      = response[1].querySelector('#questionsTemplate').innerHTML;                    
                 template    = Handlebars.compile(source);                   
                 html        = template({'questions' : QuizApp.questions});                  
 
@@ -104,7 +104,7 @@
                 var card;
                 
                 if (e.target === document.getElementById('button-start')) {             
-                    QuizApp.loadQuestions(QuizApp.select.value);
+                    QuizApp.loadQuestions('532e1e5a913519706e238344');
                 }
 
                 if (e.target === document.getElementById('button-back')) {                  
@@ -231,23 +231,23 @@
             Q.stopUnhandledRejectionTracking();
 
             // Do the usual XHR stuff
-            req = new XMLHttpRequest();
-
+            req = new XMLHttpRequest();                        
+            req.open('GET', url, true);
+            
             if (responseType !== 'undefined') { 
                 try {
                     // some browsers throw when setting `responseType` to an unsupported value
-                    req.responseType = responseType;
+                    req.responseType = responseType;                    
                 } catch (error) {
-                    //d.reject(Error('Unsupported response type: ' + responseType));
+                    //d.reject(Error('Unsupported response type: ' + responseType));                                 
                 }
-            }
-            
-            req.open('GET', url);
+            }     
+
             req.onload = function() {
                 // This is called even on 404 etc
                 // so check the status
                 if (req.status == 200) {
-                    // Resolve the promise with the response text
+                    // Resolve the promise with the response text                    
                     d.resolve(req.response);
                 }
                 else {
