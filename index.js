@@ -1,4 +1,4 @@
-(function(){
+(function() {
 
 // ##### CONFIGURATION ##### //
 
@@ -26,13 +26,6 @@
 	// create model
 	Quiz = mongoose.model('Quiz', schemaQuiz);
 
-
-	Quiz.find(function(err, questions) {	
-		if (err) {
-			console.log(err);
-		}
-	});	
-
 // ##### WEB APP SETUP ##### //
 	app = express();
 
@@ -59,9 +52,11 @@
 
 	app.get('/quiz/:id', function(req, res) {		
 		Quiz.findOne({_id : req.params.id}, 'title updated _id questions', function(err, data) {			
-			var json = data.toObject(),
+			var json 	= data.toObject(),
 				answers = [], 
-				answersCopy, options, i;
+				answersCopy, options, i;		
+
+				console.log(data.toObject());	
 
 			// 1.add all answers to array and remove from original data
 			for (i = 0; i < json.questions.length; i++) {
@@ -89,7 +84,6 @@
 
 			   	//6.append to some kind of json....
 			   	json.questions[i].options = options;
-
 			}
 
 			// 3.shuffle questions
@@ -119,7 +113,6 @@
 			res.json(data.questions[0].answer);
 		});
 	});
-
 
 	port = Number(process.env.PORT || 5000);
 	app.listen(port, function() {
