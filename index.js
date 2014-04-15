@@ -5,6 +5,7 @@
     var express     = require("express"),
         logfmt      = require("logfmt"),
         mongoose    = require('mongoose'),
+        sass        = require('node-sass'),
         db, schemaQuiz, schemaQuestion, Quiz, app, port;
 
 
@@ -30,9 +31,16 @@
 // ##### WEB APP SETUP ##### //
     app = express();
 
-    app.configure(function () {
+    app.configure(function () {        
         app.use(logfmt.requestLogger());
-        app.use(express.compress()); // gzip
+        app.use(express.compress()); // gzip        
+        app.use(sass.middleware({
+            src: __dirname,
+            dest: __dirname,
+            debug: true,
+            outputStyle: 'compressed',
+            minify: true
+        }));
         app.use('/static', express.static(__dirname + '/static'));
     });
 
