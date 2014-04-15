@@ -104,7 +104,7 @@
                 var card;
                 
                 if (e.target === document.getElementById('button-start')) {             
-                    QuizApp.loadQuestions('532e1e5a913519706e238344');
+                    QuizApp.loadQuestions(QuizApp.select.value);
                 }
 
                 if (e.target === document.getElementById('button-back')) {                  
