@@ -42,7 +42,11 @@ body {
 	font-family: Helvetica;
 	background: #d35400;	
 	margin: 0;			
-	overflow: hidden;		
+	overflow: hidden;	
+
+	/* prevent scrolling on touch screens */
+	width: 100%;
+	position: fixed;	
 }
 
 .score {
