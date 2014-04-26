@@ -154,8 +154,8 @@
                 parent = QuizApp.getParent.call(option, 'card');
 
                 parent.querySelector('.js-card-back').classList.add(cardBackClass);
-                parent.classList.add('answer-displayed');   
-                QuizApp.slideWithDelay.call(parent.parentNode, 600);                
+                parent.classList.add('card-flip');   
+                QuizApp.slideWithDelay.call(parent.parentNode, (400+400));                
             })
             .done();            
         },
@@ -281,17 +281,19 @@
 
                 return '';
             }); 
-
+/*
             Handlebars.registerHelper('randomNumberInInterval', function (min, max) {
+                return 1;
                 return Math.floor(Math.random() * (max - min + 1) + min);
             });   
 
             Handlebars.registerHelper('randomCircularDirection', function () {
+                return 'cw';
                 var trueOrFalse = Math.floor(Math.random() * 2);
 
                 return (trueOrFalse) ? 'cw' : 'ccw';
             });   
-
+*/
             /* Takes an index and converts to alpha (A-Z), when reaching Z it starts over */
             Handlebars.registerHelper('convertNumberToAlpha', function (index) {
                 return String.fromCharCode(index%26 + 65);

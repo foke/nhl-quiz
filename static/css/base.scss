@@ -1,3 +1,36 @@
+/** MIXINS **/
+@mixin transition($value) {
+	-webkit-transition: $value;
+	-moz-transition: $value;
+	transition: $value;
+}
+
+@mixin transform($value) {
+	-webkit-transform: $value;
+	-moz-transform: $value;
+	transform: $value;
+}
+
+@mixin transform-style($value) {
+	-webkit-transform-style: $value;
+	-moz-transform-style: $value;
+	transform-style: $value;
+}
+
+@mixin perspective($value) {
+	-webkit-perspective: $value;
+	-moz-perspective: $value;
+	-ms-perspective: $value;
+	perspective: $value;
+}
+
+@mixin backface-visibility($value) {
+	-webkit-backface-visibility: $value;
+	-moz-backface-visibility: $value;
+	backface-visibility: $value;
+}
+
+
 /** GENERAL **/
 html,
 body {
@@ -9,8 +42,7 @@ body {
 	font-family: Helvetica;
 	background: #d35400;	
 	margin: 0;			
-	overflow: hidden;	
-	-webkit-transition: margin 0.2s linear;			
+	overflow: hidden;		
 }
 
 .score {
@@ -26,7 +58,6 @@ body {
 }
 
 
-
 /** CARDS **/
 .card-wrapper {	
 	top: 0;
@@ -34,7 +65,8 @@ body {
 	position: absolute;
 	height: 100%;
 	width:100%;
-	-webkit-transition: all 0.2s linear;	
+
+	@include transition(all 0.2s linear);	
 }
 .card-wrapper-current {
 	left: 0;
@@ -53,10 +85,8 @@ body {
 	top: 50%;
 	left: 50%;
 
-	-webkit-transition: 0.2s;
-	-webkit-transform-style: preserve-3d;
-	-webkit-perspective: 1000;
-
+	@include transform-style(preserve-3d);	/* position children in 3d space */
+	@include perspective(100rem);			/* "distance" between user and 3d space */
 
 	.question {
 		font-size: 2rem;
@@ -67,15 +97,16 @@ body {
 		display: inline-block;
 		width: 49%;
 		font-size: 1.4rem;
-	}
-	.option::before {					
-		content: attr(data-prefix);
-		margin-right:1rem;
 
-		white-space: nowrap;
-	    overflow: hidden;
-	    text-overflow: ellipsis;
-	    display: inline-block;
+		&::before {					
+			content: attr(data-prefix);
+			margin-right:1rem;
+
+			white-space: nowrap;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    display: inline-block;
+		}
 	}
 
 	.index {
@@ -97,19 +128,23 @@ body {
 		position: absolute;
 		top: 0;
 		left: 0;
-		backface-visibility:hidden;
-		-webkit-backface-visibility:hidden;
+		
+		@include backface-visibility(hidden);
+		@include transition(.4s);
+		    	
+		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
 	}
 
 	/* front pane, placed above back */
 	.front {
 		z-index: 2;
 		background: #fff; /*#fef7dc;*/
+		@include transform(rotateY(0deg));
 	}
 
 	/* back, initially hidden pane */
 	.back {										
-		-webkit-transform: rotate3d(0,1,0,180deg);
+		@include transform(rotateY(-180deg));
 		color: rgba(255, 255, 255, .3);
 	}
 
@@ -130,6 +165,16 @@ body {
 	}
 
 }
+
+.card-flip {
+	.back {
+		@include transform(rotateY(0deg));
+	}
+	
+	.front {
+		@include transform(rotateY(180deg));
+	}
+}
 	
 .card-content {
 	margin: 2rem;
@@ -143,36 +188,6 @@ body {
 	line-height: 300px;
 	color: rgba(255,255,255,.4);
 }
-
-
-
-/** CARD ANGLES **/
-.card.angle-cw-1 {
-	-webkit-transform: rotate(1deg);													
-}
-.card.answer-displayed.angle-cw-1 {
-	-webkit-transform: rotate3d(1, 0, 0, 0) rotate3d(0, 1, 0, 180deg) rotate3d(0, 0, 1, -1deg);	
-}
-.card.angle-cw-2 {
-	-webkit-transform: rotate(2deg);												
-}
-.card.answer-displayed.angle-cw-2 {
-	-webkit-transform: rotate3d(1, 0, 0, 0) rotate3d(0, 1, 0, 180deg) rotate3d(0, 0, 1, -2deg);	
-}
-.card.angle-ccw-1 {
-	-webkit-transform: rotate(-1deg);												
-}
-.card.answer-displayed.angle-ccw-1 {
-	-webkit-transform: rotate3d(1, 0, 0, 0) rotate3d(0, 1, 0, 180deg) rotate3d(0, 0, 1, 1deg);	
-}
-.card.angle-ccw-2 {
-	-webkit-transform: rotate(-2deg);												
-}
-.card.answer-displayed.angle-ccw-2 {
-	-webkit-transform: rotate3d(1, 0, 0, 0) rotate3d(0, 1, 0, 180deg) rotate3d(0, 0, 1, 2deg);	
-}
-
-
 
 /** BUTTONS **/
 .button {
