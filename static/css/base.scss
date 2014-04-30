@@ -212,10 +212,10 @@ body {
 	margin: .5rem;
 	text-decoration: none;
 
-	@include buttonColors(#000, #fff, rgba(0, 0, 0, .1));
+	@include buttonColors(#000, #fff, rgba(0, 0, 0, .05));
 	
 	border-style: dashed;	
-	border-width: 1px;
+	border-width: 2px;
 	
 	&:hover,
 	&:focus {
