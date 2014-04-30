@@ -27,8 +27,10 @@
 
     // create model
     Quiz = mongoose.model('Quiz', schemaQuiz);
+    
 
 // ##### WEB APP SETUP ##### //
+
     app = express();
 
     app.configure(function () {        

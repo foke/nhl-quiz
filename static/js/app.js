@@ -1,12 +1,14 @@
 (function() {
     "use strict";
 
-    var QuizApp = {
+    var QuizApp, hasClass, getParentWithClass, getNodeWithClassByBubbling;
+
+    QuizApp = {
     
         questions   : {},
         index       : 0,
         points      : 0,
-        select      : undefined,
+        select      : void 0,   // 'cause undefined won't do it
 
         init : function () {
             QuizApp.handleInteractions();
@@ -22,7 +24,10 @@
 
         restart : function () {
             var questionSlides  = document.querySelectorAll('.js-card-question-wrapper'),
-                lastWrapper     = document.getElementById('last-wrapper');
+                lastWrapper     = document.getElementById('last-wrapper'),
+                startButton     = document.getElementById('button-start');
+
+            startButton.classList.remove('activated');
 
             QuizApp.resetValues();
             QuizApp.removeNodes(questionSlides);
@@ -91,7 +96,7 @@
                 document.getElementById('max-score').textContent = QuizApp.questions.length;
 
                 // start
-                QuizApp.slideWithDelay.call(firstWrapper, 0);
+                QuizApp.slideWithDelay.call(firstWrapper, 500);
 
             }, function () {
                 // one or more failed
@@ -101,39 +106,48 @@
 
         handleInteractions : function () {
             document.getElementById('quijs-app').addEventListener('click', function (e) {   
-                var card;
+                var element                 = void 0,
+                    startButtonWasPressed   = e.target === document.getElementById('button-start'),
+                    backButtonWasPressed    = e.target === document.getElementById('button-back'),
+                    answerOptionWasPressed  = (element = getNodeWithClassByBubbling.call(e.target, 'js-option-button'));
                 
-                if (e.target === document.getElementById('button-start')) {             
-                    QuizApp.loadQuestions(QuizApp.select.value);
-                }
+                if (startButtonWasPressed) {                     
+                    QuizApp.lockAction(e.target);
+                    QuizApp.loadQuestions(QuizApp.select.value);                
+                }            
 
-                if (e.target === document.getElementById('button-back')) {                  
-                    QuizApp.restart();
-                }
+                if (backButtonWasPressed) {                  
+                    QuizApp.restart();                    
+                }                
                 
-                if (QuizApp.hasClass.call(e.target, 'js-card-option')) {
-                    card = QuizApp.getParent.call(e.target, 'card');
-
-                    QuizApp.deactivateOptions(card);                    
-                    QuizApp.checkAnswer(e.target);
+                if (answerOptionWasPressed) {                                    
+                    QuizApp.lockAnswer(element);                    
+                    QuizApp.checkAnswer(element);
                 }       
 
                 e.preventDefault();                 
             });
         },
 
-        deactivateOptions : function (card) {
-            var options = card.querySelectorAll('.js-card-option');
+        lockAction : function (button) {
+            button.classList.add('activated');
+        },
 
-            [].forEach.call(options, function (node) {
-                node.classList.remove('js-card-option');
+        lockAnswer : function (option) {
+            var card = getParentWithClass.call(option, 'card'),
+                allOptions = card.querySelectorAll('.js-option-button');
+
+            option.classList.add('activated');
+
+            [].forEach.call(allOptions, function (node) {
+                node.classList.remove('js-option-button');                
             });
         },
 
         checkAnswer : function (option) {
-            var userAnswer  = option.textContent,
+            var userAnswer  = option.textContent.trim(),
                 parent      = option.parentNode,
-                hasParent, parent, correctAnswer, cardBackClass;        
+                correctAnswer, cardBackClass;        
                                         
             QuizApp.promiseGet('/quiz/answer/'+QuizApp.questions[QuizApp.index-1]._id, 'json')
             .then(function (response) {
@@ -151,7 +165,7 @@
                     cardBackClass = 'back-wrong';                   
                 }                   
 
-                parent = QuizApp.getParent.call(option, 'card');
+                parent = getParentWithClass.call(option, 'card');
 
                 parent.querySelector('.js-card-back').classList.add(cardBackClass);
                 parent.classList.add('card-flip');   
@@ -160,31 +174,12 @@
             .done();            
         },
 
-        getParent : function (parentClass) {
-            var parent = this.parentNode; 
-
-            if (parentClass !== 'undefined') {
-                while (!QuizApp.hasClass.call(parent, parentClass) && parent !== null) {
-                    parent = parent.parentNode;                     
-                }   
-            }
-
-            return parent;
-        },
         
-        hasClass : function (selector) {                
-            var className = ' ' + selector + ' ';
-            if ((' ' + this.className + ' ').replace(/[\n\t\r]/g, ' ').indexOf(className) > -1) {
-                return true;
-            }              
-
-            return false;
-        },
 
         slideWithDelay : function (delay, slideReversed) {
             var node            = this,
-                ms              = (delay === 'undefined') ? 0 : delay,
-                shouldGoForward = (slideReversed === 'undefined' || !slideReversed),
+                ms              = (typeof delay === 'undefined') ? 0 : delay,
+                shouldGoForward = (typeof slideReversed === 'undefined' || !slideReversed),
                 nextWrapper;
 
             if (shouldGoForward) {
@@ -234,7 +229,7 @@
             req = new XMLHttpRequest();                        
             req.open('GET', url, true);
             
-            if (responseType !== 'undefined') { 
+            if (typeof responseType !== 'undefined') { 
                 try {
                     // some browsers throw when setting `responseType` to an unsupported value
                     req.responseType = responseType;                    
@@ -281,24 +276,43 @@
 
                 return '';
             }); 
-/*
-            Handlebars.registerHelper('randomNumberInInterval', function (min, max) {
-                return 1;
-                return Math.floor(Math.random() * (max - min + 1) + min);
-            });   
 
-            Handlebars.registerHelper('randomCircularDirection', function () {
-                return 'cw';
-                var trueOrFalse = Math.floor(Math.random() * 2);
-
-                return (trueOrFalse) ? 'cw' : 'ccw';
-            });   
-*/
             /* Takes an index and converts to alpha (A-Z), when reaching Z it starts over */
             Handlebars.registerHelper('convertNumberToAlpha', function (index) {
                 return String.fromCharCode(index%26 + 65);
             });
         }
+    };
+
+    getNodeWithClassByBubbling = function (className) {        
+        if (hasClass.call(this, className)) {
+            return this;
+        } else {            
+            return getParentWithClass.call(this, className);
+        }
+    },
+
+    getParentWithClass = function (parentClass) {        
+        var parent = this.parentNode; 
+
+        while (parent) {
+            if (hasClass.call(parent, parentClass)) {
+                return parent;                
+            }     
+
+            parent = parent.parentNode;                
+        }   
+        
+        return parent;
+    };
+        
+    hasClass = function (selector) {                
+            var className = ' ' + selector + ' ';
+            if ((' ' + this.className + ' ').replace(/[\n\t\r]/g, ' ').indexOf(className) > -1) {
+                return true;
+            }              
+
+            return false;
     };
 
     QuizApp.init(); 
